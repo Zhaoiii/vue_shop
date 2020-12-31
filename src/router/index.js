@@ -4,6 +4,8 @@ import Login from '../components/login'
 import Home from '../components/home'
 import Welcome from '../components/welcome'
 import Users from '../components/users'
+import Rights from '../components/rights/rights.vue'
+import Roles from '../components/rights/roles.vue'
 // 导入全局样式表
 import '../assets/css/global.css'
 
@@ -18,7 +20,9 @@ const routes = [
     redirect: '/welcome',
     children: [
       { path: '/welcome', component: Welcome },
-      { path: '/users', component: Users }
+      { path: '/users', component: Users },
+      { path: '/rights', component: Rights },
+      { path: '/roles', component: Roles }
     ]
   }
 ]
