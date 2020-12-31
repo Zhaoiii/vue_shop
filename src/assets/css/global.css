@@ -6,3 +6,10 @@ body,
     margin: 0;
     padding: 0;
 }
+.el-breadcrumb{
+    font-size: 12p;
+    margin-bottom: 20px;
+}
+.el-card{
+    box-shadow: 0 1px 1px #999999 !important;
+}
