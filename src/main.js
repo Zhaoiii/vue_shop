@@ -17,7 +17,7 @@ axios.interceptors.request.use(config => {
   return config
 })
 Vue.prototype.$axios_ = axios
-Vue.prototype.$confirm = confirm
+// Vue.prototype.$confirm = confirm
 
 Vue.config.productionTip = false
 
