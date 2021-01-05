@@ -24,7 +24,9 @@ import {
   Dialog,
   MessageBox,
   Tag,
-  Tree
+  Tree,
+  Select,
+  Option
 }
   from 'element-ui'
 
@@ -52,5 +54,7 @@ Vue.use(Pagination)
 Vue.use(Dialog)
 Vue.use(Tag)
 Vue.use(Tree)
+Vue.use(Select)
+Vue.use(Option)
 Vue.prototype.$MessageBox = MessageBox
 Vue.prototype.$confirm = MessageBox.confirm

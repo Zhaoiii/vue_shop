@@ -45,9 +45,9 @@
         <el-table-column label="角色描述" prop="roleDesc"></el-table-column>
         <el-table-column label="操作" width="300">
           <template slot-scope="scope">
-            <el-button type="primary" size="mini" icon="el-icon-edit" @click="editRole(scope.row.id)">编辑</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-edit">编辑</el-button>
             <el-button type="denger" size="mini" icon="el-icon-delete">删除</el-button>
-            <el-button type="warning" size="mini" icon="el-icon-setting" @click="setRights(scope.row)">分配权限</el-button>
+            <el-button type="warning" size="mini" icon="el-icon-setting" @click="setRightsDialog(scope.row)">分配权限</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -55,14 +55,15 @@
     <!-- 所有权限弹出框 -->
     <el-dialog
       title="权限分配"
-      :visible="allrightsDialogVisible"
-      width="30%">
+      :visible.sync="allrightsDialogVisible"
+      width="30%"
+      @close="allRightsDialogClosed">
       <el-tree :data="allRightsList" :props="rightsProps" show-checkbox node-key="id"
-       default-expand-all :default-checked-keys="defaultleafKeys">
+       default-expand-all :default-checked-keys="defaultleafKeys" ref="treeRef">
       </el-tree>
       <span slot="footer" class="dialog-footer">
         <el-button @click="allrightsDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="allrightsDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="setRoleRights">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -79,7 +80,8 @@ export default {
         children: 'children',
         label: 'authName'
       },
-      defaultleafKeys: []
+      defaultleafKeys: [],
+      preSetRole: {}
     }
   },
   created() {
@@ -129,8 +131,12 @@ export default {
         this.$message.error('删除失败')
       }
     },
-    async setRights(node) {
-      this.defaultleafKeys = []
+    // 点击分配权限按钮弹出对话框
+    async setRightsDialog(node) {
+      console.log(this.defaultleafKeys)
+      console.log(this.preSetRole)
+      console.log(this.allRightsList)
+      this.preSetRole = node
       this.allrightsDialogVisible = true
       const { data: res } = await this.$axios_.get('rights/tree')
       if (res.meta.status !== 200) {
@@ -138,7 +144,10 @@ export default {
       }
       this.allRightsList = res.data
       this.getLeafKeys(node, this.defaultleafKeys)
+      // console.log(this.defaultleafKeys)
       console.log(this.defaultleafKeys)
+      console.log(this.preSetRole)
+      console.log(this.allRightsList)
     },
     // 通过递归的形式获取三级节点的id放入数组
     getLeafKeys(node, arr) {
@@ -146,6 +155,28 @@ export default {
         return arr.push(node.id)
       }
       node.children.forEach(element => this.getLeafKeys(element, arr))
+    },
+    async setRoleRights() {
+      const checkedNodes = [...this.$refs.treeRef.getCheckedNodes(), ...this.$refs.treeRef.getHalfCheckedNodes()]
+      // 上面的checkedNodes是个伪数组，用循环把他转换成一个数组
+      var arr = []
+      for (let i = 0; i < checkedNodes.length; i++) {
+        arr.push(checkedNodes[i].id)
+      }
+      // console.log(arr)
+      const { data: res } = await this.$axios_.post(`roles/${this.preSetRole.id}/rights`, { rids: arr.join() })
+      if (res.meta.status !== 200) {
+        return this.$message.error('更新失败')
+      }
+      this.$message.success(res.meta.msg)
+      // this.getLeafKeys(this.preSetRole, this.defaultleafKeys)
+      // 为什么一定要用getRoleList，而不是在allRightsDialogClosed中清零也行
+      this.getRoleList()
+      this.allrightsDialogVisible = false
+    },
+    // 分配权限弹出框关闭
+    allRightsDialogClosed() {
+      this.defaultleafKeys = []
     }
   }
 }

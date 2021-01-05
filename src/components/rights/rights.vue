@@ -37,7 +37,7 @@ export default {
       if (res.meta.status === 200) {
         this.rightsList = res.data
       }
-      console.log(this.rightsList)
+      // console.log('权限', this.rightsList)
     }
   },
   created() {
