@@ -8,7 +8,7 @@
     </el-breadcrumb>
     <!-- 卡片区域 -->
     <el-card>
-      <el-button type="primary" id="addcate">添加分类</el-button>
+      <el-button type="primary" id="addcate" @click="shouAddCateDialog">添加分类</el-button>
       <!-- 表格区 -->
       <tree-table :data="goodsCateList" :columns="columns" :selection-type="false" :expand-type="false"
       :show-index="true" index-text="#">
@@ -37,6 +37,32 @@
         :total="total">
       </el-pagination>
     </el-card>
+    <!-- 添加分类弹出框 -->
+    <el-dialog
+      title="添加分类"
+      :visible.sync="addCateDialogVisible"
+      width="50%"
+      @close="addCateDialogClosed">
+      <el-form ref="addCateFormRef" label-width="100px" :rules="addCateFormRules" :model="addCateForm">
+        <!-- 分类名称部分 -->
+        <el-form-item label="活动名称" prop="cat_name">
+          <el-input v-model="addCateForm.cat_name"></el-input>
+        </el-form-item>
+        <!-- 类别部分 -->
+        <el-form-item label="选择父类">
+          <el-cascader
+            v-model="selectedParentKeys"
+            :options="parentList"
+            :props="{ expandTrigger: 'hover', label: 'cat_name', value: 'cat_id'}"
+            @change="selectedParentKeysChange" clearable change-on-select>
+          </el-cascader>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addCateDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addCateDialogConfirmBtn">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -76,7 +102,26 @@ export default {
         pagesize: 5
       },
       // 数据总页数
-      total: 0
+      total: 0,
+      // 添加商品分类表单
+      addCateForm: {
+        cat_pid: 0,
+        cat_name: '',
+        cat_level: 0
+      },
+      // 添加商品分类弹出框可见性
+      addCateDialogVisible: false,
+      // 添加商品分类表单验证规则
+      addCateFormRules: {
+        cat_name: [
+          { required: true, message: '请输入分类名', trigger: 'blur' },
+          { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
+        ]
+      },
+      // 父类列表
+      parentList: [],
+      // 被选中的父类
+      selectedParentKeys: []
     }
   },
   methods: {
@@ -98,6 +143,49 @@ export default {
     handleCurrentChange(val) {
       this.param.pagenum = val
       this.getGoodsCateList()
+    },
+    // 添加分类按钮，点击显示dialog
+    shouAddCateDialog() {
+      // 打开添加分类弹出框先获取父分类
+      this.getParentList()
+      this.addCateDialogVisible = true
+    },
+    async getParentList() {
+      const { data: res } = await this.$axios_.get('categories', { params: { type: 2 } })
+      // console.log('父类', res)
+      this.parentList = res.data
+    },
+    selectedParentKeysChange() {
+      // console.log(this.selectedParentKeys)
+      if (this.selectedParentKeys.length === 1) {
+        this.addCateForm.cat_level = 1
+        this.addCateForm.cat_pid = this.selectedParentKeys[0]
+      } else if (this.selectedParentKeys.length === 2) {
+        this.addCateForm.cat_level = 2
+        this.addCateForm.cat_pid = this.selectedParentKeys[1]
+      } else {
+        this.addCateForm.cat_level = 0
+        this.addCateForm.cat_pid = 0
+      }
+    },
+    // 添加分类弹出框关闭事件
+    addCateDialogClosed() {
+      this.$refs.addCateFormRef.resetFields()
+      this.selectedParentKeys = []
+      this.addCateForm.cat_pid = 0
+      this.addCateForm.cat_level = 0
+    },
+    // 添加分类弹出框确定按钮
+    async addCateDialogConfirmBtn() {
+      console.log(this.addCateForm)
+      const { data: res } = await this.$axios_.post('categories', this.addCateForm)
+      if (res.meta.status !== 201) {
+        console.log(res)
+        return this.$message.error('添加失败')
+      }
+      this.$message.success(res.meta.msg)
+      this.getGoodsCateList()
+      this.addCateDialogVisible = false
     }
   },
   created() {
@@ -109,5 +197,8 @@ export default {
 <style>
 #addcate{
   margin-bottom: 20px !important;
+}
+.el-cascader-panel{
+  height: 200px;
 }
 </style>
