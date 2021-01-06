@@ -123,9 +123,9 @@ export default {
       // 添加觉得表单验证
       addRoleRules: {
         roleName: [
-            { required: true, message: '请输入角色名称', trigger: 'blur' },
-            { min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
-          ],
+          { required: true, message: '请输入角色名称', trigger: 'blur' },
+          { min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
+        ],
         roleDesc: [
           { required: true, message: '请输入角色描述', trigger: 'blur' },
           { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
