@@ -5,6 +5,7 @@ import router from './router'
 import './plugins/element.js'
 import './assets/fonts/iconfont.css'
 
+import ZkTable from 'vue-table-with-tree-grid'
 // 导入axios
 import axios from 'axios'
 // 配置axios
@@ -23,6 +24,7 @@ Vue.config.productionTip = false
 
 Vue.config.devtools = true
 
+Vue.component('tree-table', ZkTable)
 new Vue({
   router,
   render: h => h(App)
