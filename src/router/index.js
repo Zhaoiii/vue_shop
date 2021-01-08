@@ -7,6 +7,7 @@ import Users from '../components/users'
 import Rights from '../components/rights/rights.vue'
 import Roles from '../components/rights/roles.vue'
 import Cate from '../components/goods/cate.vue'
+import Params from '../components/goods/params.vue'
 
 // 导入全局样式表
 import '../assets/css/global.css'
@@ -25,7 +26,8 @@ const routes = [
       { path: '/users', component: Users },
       { path: '/rights', component: Rights },
       { path: '/roles', component: Roles },
-      { path: '/categories', component: Cate }
+      { path: '/categories', component: Cate },
+      { path: '/params', component: Params }
     ]
   }
 ]
