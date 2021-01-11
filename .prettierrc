@@ -1,4 +1,9 @@
 {
+    "singleQuote": true,
+    "trailingComma": "none",
+    "prettier.semi": false,
     "semi": false,
-    "singleQuote": true
+    "prettier.singleQuote": true, // 使用单引号代替双引号
+    "prettier.jsxSingleQuote": true, // 在jsx中使用单引号代替双引号
+    "prettier.printWidth": 200
 }
