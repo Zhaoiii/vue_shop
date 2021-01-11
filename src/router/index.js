@@ -10,6 +10,7 @@ import Cate from '../components/goods/cate.vue'
 import Params from '../components/goods/params.vue'
 import Goods from '../components/goods/goods.vue'
 import AddGoodsPage from '../components/goods/addGoodsPage.vue'
+import Order from '../components/order.vue'
 // 导入全局样式表
 import '../assets/css/global.css'
 
@@ -30,7 +31,8 @@ const routes = [
       { path: '/categories', component: Cate },
       { path: '/params', component: Params },
       { path: '/goods', component: Goods },
-      { path: '/goods/add', component: AddGoodsPage }
+      { path: '/goods/add', component: AddGoodsPage },
+      { path: '/orders', component: Order }
     ]
   }
 ]
